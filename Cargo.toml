@@ -1,0 +1,21 @@
+[package]
+name = "yew-tou-rs"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+path = "src/lib.rs"
+
+[dependencies]
+yew = { version = "0.21.0", features = ["csr"] }
+js-sys = "=0.3.68"
+serde_json = "1.0.117"
+
+[[example]]
+name = "basic"
+path = "examples/basic.rs"
+
+[[bin]]
+name = "example-basic"
+path = "examples/basic.rs"
