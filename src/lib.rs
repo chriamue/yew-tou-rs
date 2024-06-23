@@ -1,14 +1,15 @@
 use wasm_bindgen::JsCast;
 use web_sys::Element;
 use yew::prelude::*;
+use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct TourStep {
     pub selector: String,
     pub content: String,
 }
 
-#[derive(Properties, Clone, Debug, PartialEq)]
+#[derive(Properties, Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct TourConfig {
     pub steps: Vec<TourStep>,
 }
