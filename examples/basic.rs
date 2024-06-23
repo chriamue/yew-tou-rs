@@ -19,7 +19,7 @@ pub fn app() -> Html {
         TourStep {
             selector: "footer".to_string(),
             content: "This is a footer".to_string(),
-        }
+        },
     ];
 
     html! {
@@ -30,7 +30,7 @@ pub fn app() -> Html {
             <footer class="footer-step">
                 <a href="https://github.com/chriamue/yew-tou-rs">{"yew-tou-rs"}</a>
             </footer>
-            <Tour steps={steps} selector={"introduction"}/>
+            <Tour steps={steps} />
         </div>
     }
 }
