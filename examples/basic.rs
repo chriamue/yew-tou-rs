@@ -1,5 +1,5 @@
 use yew::prelude::*;
-use yew_tou_rs::{Tour, TourStep};
+use yew_tou_rs::prelude::*;
 
 #[function_component(App)]
 pub fn app() -> Html {
