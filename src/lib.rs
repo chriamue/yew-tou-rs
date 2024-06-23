@@ -1,5 +1,3 @@
-use wasm_bindgen::JsCast;
-use web_sys::Element;
 use yew::prelude::*;
 use serde::{Deserialize, Serialize};
 
@@ -38,15 +36,32 @@ pub fn tour(config: &TourConfig) -> Html {
                 let height = rect.height();
                 let width = rect.width();
 
-                tooltip_position.set((
-                    (top + height).max(0.0),
-                    (left + width / 2.0 - 125.0).max(0.0),
-                ));
-                if top < 0.0 {
-                    arrow_position.set("bottom".to_string());
-                } else {
-                    arrow_position.set("top".to_string());
+                enum Position {
+                    Top,
+                    Bottom
                 }
+
+                let position = if top + height + 100.0 > window.inner_height().unwrap().as_f64().unwrap() {
+                    Position::Top
+                } else {
+                    Position::Bottom
+                };
+
+                let tooltip_top = match position {
+                    Position::Top => top - 200.0,
+                    Position::Bottom => top + height + 10.0,
+                };
+
+                let tooltip_left = (left + width / 2.0 - 125.0).max(0.0);
+
+                tooltip_position.set((tooltip_top, tooltip_left));
+
+                let arrow_position_string = match position {
+                    Position::Top => "bottom",
+                    Position::Bottom => "top",
+                };
+
+                arrow_position.set(arrow_position_string.to_string());
             }
         })
     };
@@ -59,7 +74,6 @@ pub fn tour(config: &TourConfig) -> Html {
         let update_position = update_position.clone();
         Callback::from(move |_| {
             if *current_step < step_count - 1 {
-                clear_highlight(&config.steps[*current_step].selector.clone());
                 highlight_element(&config.steps[*current_step + 1].selector);
                 update_position.emit(config.steps[*current_step + 1].selector.clone());
                 last_selector.set(config.steps[*current_step].selector.clone());
@@ -75,7 +89,6 @@ pub fn tour(config: &TourConfig) -> Html {
         let update_position = update_position.clone();
         Callback::from(move |_| {
             if *current_step > 0 {
-                clear_highlight(&config.steps[*current_step].selector.clone());
                 highlight_element(&config.steps[*current_step - 1].selector);
                 update_position.emit(config.steps[*current_step - 1].selector.clone());
                 last_selector.set(config.steps[*current_step].selector.clone());
@@ -85,19 +98,18 @@ pub fn tour(config: &TourConfig) -> Html {
     };
 
     let on_skip = {
-        let config = config.clone();
-        let current_step = current_step.clone();
         let show_tour = show_tour.clone();
         Callback::from(move |_| {
-            clear_highlight(&config.steps[*current_step].selector.clone());
             show_tour.set(false);
         })
     };
 
     let config_clone = config.clone();
     let current_step_clone = current_step.clone();
+    let update_position_clone = update_position.clone();
     use_effect_with((), move |_| {
-        highlight_element(&config_clone.steps[*current_step_clone].selector);
+        highlight_element(&config_clone.steps[*current_step_clone].selector.clone());
+        update_position_clone.emit(config_clone.steps[*current_step_clone].selector.clone());
         || ()
     });
 
@@ -114,10 +126,24 @@ pub fn tour(config: &TourConfig) -> Html {
             <div class="introjs-helperLayer"></div>
             <div class="introjs-tooltipReferenceLayer" style={format!("left: {}px; top: {}px;", tooltip_left, tooltip_top)} >
                 <div class="introjs-tooltip introjs-floating" role="dialog" >
-                    <div class="introjs-arrow top" style="display: inherit;"></div>
+                    <div class={format!("introjs-arrow {}", *arrow_position)} style="display: inherit;"></div>
                     <div class="introjs-tooltip-header">
+                    <div class="introjs-tooltip-step" style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        width: 30px;
+                        height: 30px;
+                        border-radius: 50%;
+                        background-color: #007bff;
+                        color: white;
+                        font-weight: bold;
+                        font-size: 16px;
+                        margin-right: 10px;
+                    ">
+                        {*current_step + 1}
+                    </div>
                     <h1 class="introjs-tooltip-title">
-                        {"Step "}{*current_step + 1}{" of "}{config.steps.len()}
                     </h1>
                     <a class="introjs-skipbutton" href="#" onclick={on_skip}>
                         {"×"}
@@ -136,7 +162,6 @@ pub fn tour(config: &TourConfig) -> Html {
                             let is_current = *current_step == i;
                             let config = config.clone();
                             let on_click = Callback::from(move |_| {
-                                clear_highlight(&*last_selector);
                                 highlight_element(&config.steps[i].selector);
                                 update_position.emit(config.steps[i].selector.clone());
                                 last_selector.set(config.steps[*current_step].selector.clone());
@@ -207,22 +232,5 @@ fn highlight_element(selector: &str) {
                 ),
             )
             .unwrap();
-    }
-}
-
-fn clear_highlight(selector: &str) {
-    let cleared_selector = selector.replace(".", "");
-    let document = web_sys::window().unwrap().document().unwrap();
-    let elements = document.query_selector_all(".introjs-showElement").unwrap();
-    for i in 0..elements.length() {
-        if let Some(node) = elements.item(i) {
-            if let Ok(element) = node.dyn_into::<Element>() {
-                element.set_attribute("style", "").unwrap();
-                let old_class = element.get_attribute("class").unwrap();
-                let new_class = old_class.replace("introjs-showElement", "");
-                let new_class = new_class.replace("introjs-relativePosition", "");
-                element.set_attribute("class", &new_class).unwrap();
-            }
-        }
     }
 }
