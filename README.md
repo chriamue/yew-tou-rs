@@ -58,11 +58,32 @@ pub fn app() -> Html {
 
 ## Features
 
+### Storage
+
 If you enable the storage feature, closed tours will not be shown again:
 
 ```toml
 [dependencies]
-yew-tou-rs = { git = "https://github.com/chriamue/yew-tou-rs" , features = ["storage"] }
+yew-tou-rs = { git = "https://github.com/chriamue/yew-tou-rs", features = ["storage"] }
+```
+
+### Markdown
+
+If you enable the markdown feature, you can use markdown in the content:
+
+```toml
+[dependencies]
+yew-tou-rs = { git = "https://github.com/chriamue/yew-tou-rs", features = ["markdown"] }
+```
+
+```rust
+let steps = vec![
+    TourStep {
+        selector: ".app".to_string(),
+        content: "### Welcome to the tour\n\
+            You can find a full demo on [Konnektoren](https://konnektoren.help)".to_string(),
+    },
+];
 ```
 
 ## License

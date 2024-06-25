@@ -1,4 +1,5 @@
 mod config;
+mod content;
 mod navigation;
 mod progress;
 mod rect;

@@ -1,4 +1,5 @@
 use crate::config::TourConfig;
+use crate::content::Content;
 use crate::navigation::Navigation;
 use crate::progress::Progress;
 use crate::rect::{get_element_rect, Rect};
@@ -135,25 +136,21 @@ pub fn tour(config: &TourConfig) -> Html {
             <div class="introjs-tooltipReferenceLayer"
                 style={format!("left: {}px; top: {}px; width: {}px; height: {}px;",
                     selector_rect.x, selector_rect.y, selector_rect.width, selector_rect.height)} >
-                <div class="introjs-tooltip introjs-bottom-left-aligned" role="dialog"
-                    style={format!("left: {}px; top: {}px; height: 220px", dx, dy)}>
+                <div class="introjs-tooltip" role="dialog"
+                    style={format!("left: {}px; top: {}px;", dx, dy)}>
                     <div class={format!("introjs-arrow {}", arrow_position)} style="display: inherit;"></div>
                     <div class="introjs-tooltip-header">
-                    <StepInfo value={*current_step} />
-                    <h1 class="introjs-tooltip-title">
-                    </h1>
-                    <a class="introjs-skipbutton" href="#" onclick={on_skip}>
-                        {"×"}
-                    </a>
+                        <StepInfo value={*current_step} />
+                        <a class="introjs-skipbutton" href="#" onclick={on_skip}>
+                            {"×"}
+                        </a>
+                    </div>
+                    <Content content={(&*config.steps[*current_step].content).to_string()} />
+                    <Progress current={*current_step} total={config.steps.len()} on_click={on_progress_click} />
+                    <Navigation on_prev={on_prev} on_next={on_next} />
+                    <div class="introjs-tooltipfooter"></div>
                 </div>
-                <div class="introjs-tooltiptext">
-                    <div>{&config.steps[*current_step].content}</div>
-                </div>
-                <Progress current={*current_step} total={config.steps.len()} on_click={on_progress_click} />
-                <Navigation on_prev={on_prev} on_next={on_next} />
-                <div class="introjs-tooltipfooter"></div>
             </div>
-        </div>
         </div>
     }
 }

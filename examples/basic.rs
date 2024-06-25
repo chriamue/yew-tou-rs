@@ -5,6 +5,12 @@ use yew_tou_rs::prelude::*;
 pub fn app() -> Html {
     let steps = vec![
         TourStep {
+            selector: ".app".to_string(),
+            content: "### Welcome to the tour\n\
+                You can find a full demo on [Konnektoren](https://konnektoren.help)"
+                .to_string(),
+        },
+        TourStep {
             selector: ".h1-step".to_string(),
             content: "This is a title".to_string(),
         },
