@@ -1,9 +1,14 @@
 use crate::config::TourConfig;
 use crate::navigation::Navigation;
 use crate::progress::Progress;
-use crate::selection::{selection_rect, Selection};
+use crate::rect::{get_element_rect, Rect};
+use crate::selection::Selection;
 use crate::step_info::StepInfo;
 use yew::prelude::*;
+
+const ARROW_SIZE: i32 = 10;
+const TOOLTIP_WIDTH: i32 = 300;
+const TOOLTIP_HEIGHT: i32 = 230;
 
 fn window_height() -> i32 {
     web_sys::window()
@@ -12,6 +17,48 @@ fn window_height() -> i32 {
         .unwrap()
         .as_f64()
         .unwrap() as i32
+}
+
+fn window_width() -> i32 {
+    web_sys::window()
+        .unwrap()
+        .inner_width()
+        .unwrap()
+        .as_f64()
+        .unwrap() as i32
+}
+
+pub fn calculate_arrow_position(
+    selected_rect: &Rect,
+    tooltip_width: i32,
+    tooltip_height: i32,
+    window_width: i32,
+    window_height: i32,
+) -> (&'static str, i32, i32) {
+    let arrow_position =
+        if selected_rect.y + selected_rect.height + tooltip_height + ARROW_SIZE > window_height {
+            "bottom"
+        } else {
+            "top"
+        };
+
+    let dx = selected_rect.width / 2 - tooltip_width / 2;
+
+    let dx = if selected_rect.x + dx > window_width {
+        window_width - tooltip_width
+    } else if dx < 0 {
+        0
+    } else {
+        dx
+    };
+
+    let dy = if arrow_position == "bottom" {
+        -tooltip_height
+    } else {
+        selected_rect.height + ARROW_SIZE
+    };
+
+    (arrow_position, dx, dy)
 }
 
 #[function_component(Tour)]
@@ -58,20 +105,16 @@ pub fn tour(config: &TourConfig) -> Html {
 
     let selector: String = config.steps[*current_step].selector.clone();
 
-    let selector_rect = selection_rect(&selector).unwrap_or_default();
+    let selector_rect = get_element_rect(&selector).unwrap_or_default();
 
-    let arrow_position = if selector_rect.y < window_height() / 2 {
-        "top"
-    } else {
-        "bottom"
-    };
-
-    let dx = selector_rect.width / 2 + 10;
-    let dy = if arrow_position == "top" {
-        selector_rect.height + 10
-    } else {
-        -230
-    };
+    let window_height = window_height();
+    let (arrow_position, dx, dy) = calculate_arrow_position(
+        &selector_rect,
+        TOOLTIP_WIDTH,
+        TOOLTIP_HEIGHT,
+        window_width(),
+        window_height,
+    );
 
     html! {
         <div class="tour">
@@ -101,5 +144,70 @@ pub fn tour(config: &TourConfig) -> Html {
             </div>
         </div>
         </div>
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn calculate_arrow_position_for_selection_on_top() {
+        let selected_rect = Rect {
+            x: 200,
+            y: 20,
+            width: 100,
+            height: 50,
+        };
+        let (arrow_position, dx, dy) =
+            calculate_arrow_position(&selected_rect, TOOLTIP_WIDTH, TOOLTIP_HEIGHT, 600, 800);
+        assert_eq!(arrow_position, "top");
+        assert_eq!(dx, 0);
+        assert_eq!(dy, 60);
+    }
+
+    #[test]
+    fn calculate_arrow_position_for_selection_on_bottom() {
+        let selected_rect = Rect {
+            x: 200,
+            y: 700,
+            width: 100,
+            height: 50,
+        };
+        let (arrow_position, dx, dy) =
+            calculate_arrow_position(&selected_rect, TOOLTIP_WIDTH, TOOLTIP_HEIGHT, 600, 800);
+        assert_eq!(arrow_position, "bottom");
+        assert_eq!(dx, 0);
+        assert_eq!(dy, -TOOLTIP_HEIGHT);
+    }
+
+    #[test]
+    fn calculate_arrow_position_for_selection_on_left() {
+        let selected_rect = Rect {
+            x: 10,
+            y: 200,
+            width: 100,
+            height: 50,
+        };
+        let (arrow_position, dx, dy) =
+            calculate_arrow_position(&selected_rect, TOOLTIP_WIDTH, TOOLTIP_HEIGHT, 600, 800);
+        assert_eq!(arrow_position, "top");
+        assert_eq!(dx, 0);
+        assert_eq!(dy, 60);
+    }
+
+    #[test]
+    fn calculate_arrow_position_for_selection_on_right() {
+        let selected_rect = Rect {
+            x: 500,
+            y: 200,
+            width: 100,
+            height: 50,
+        };
+        let (arrow_position, dx, dy) =
+            calculate_arrow_position(&selected_rect, TOOLTIP_WIDTH, TOOLTIP_HEIGHT, 600, 800);
+        assert_eq!(arrow_position, "top");
+        assert_eq!(dx, 0);
+        assert_eq!(dy, 60);
     }
 }

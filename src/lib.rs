@@ -1,6 +1,7 @@
 mod config;
 mod navigation;
 mod progress;
+mod rect;
 mod selection;
 mod step;
 mod step_info;
