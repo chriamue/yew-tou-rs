@@ -4,6 +4,8 @@ use crate::progress::Progress;
 use crate::rect::{get_element_rect, Rect};
 use crate::selection::Selection;
 use crate::step_info::StepInfo;
+#[cfg(feature = "storage")]
+use gloo_storage::{LocalStorage, Storage};
 use yew::prelude::*;
 
 const ARROW_SIZE: i32 = 10;
@@ -63,7 +65,14 @@ pub fn calculate_arrow_position(
 
 #[function_component(Tour)]
 pub fn tour(config: &TourConfig) -> Html {
-    let show_tour = use_state(|| true);
+    let show_tour = {
+        #[cfg(feature = "storage")]
+        let default_show =
+            LocalStorage::get("show_tour").unwrap_or_else(|_| "true".to_string()) == "true";
+        #[cfg(not(feature = "storage"))]
+        let default_show = true;
+        use_state(|| default_show)
+    };
     let current_step = use_state(|| 0usize);
 
     if !*show_tour {
@@ -93,6 +102,8 @@ pub fn tour(config: &TourConfig) -> Html {
         let show_tour = show_tour.clone();
         Callback::from(move |_| {
             show_tour.set(false);
+            #[cfg(feature = "storage")]
+            let _ = LocalStorage::set("show_tour", "false");
         })
     };
 

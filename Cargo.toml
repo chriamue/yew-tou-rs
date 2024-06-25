@@ -7,11 +7,16 @@ edition = "2021"
 crate-type = ["cdylib", "rlib"]
 path = "src/lib.rs"
 
+[features]
+default = []
+storage = ["gloo-storage"]
+
 [dependencies]
-yew = { version = "0.21.0", features = ["csr"] }
+gloo-storage = { version = "0.3.0", optional = true }
 serde_json = "1.0.117"
-web-sys = { version = "0.3.68", features = ["DomRect"] }
 serde = { version = "1.0.203", features = ["derive"] }
+web-sys = { version = "0.3.68", features = ["DomRect"] }
+yew = { version = "0.21.0", features = ["csr"] }
 
 [[example]]
 name = "basic"
