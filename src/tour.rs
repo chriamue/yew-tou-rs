@@ -19,6 +19,10 @@ pub fn tour(config: &TourConfig) -> Html {
     let show_tour = use_state(|| true);
     let current_step = use_state(|| 0usize);
 
+    if !*show_tour {
+        return html! { <></> };
+    }
+
     let on_next = {
         let current_step = current_step.clone();
         let step_count = config.steps.len();
@@ -55,10 +59,6 @@ pub fn tour(config: &TourConfig) -> Html {
     let selector: String = config.steps[*current_step].selector.clone();
 
     let selector_rect = selection_rect(&selector).unwrap_or_default();
-
-    if !*show_tour {
-        return html! { <></> };
-    }
 
     let arrow_position = if selector_rect.y < window_height() / 2 {
         "top"
