@@ -20,6 +20,9 @@ serde = { version = "1.0.203", features = ["derive"] }
 web-sys = { version = "0.3.68", features = ["DomRect"] }
 yew = { version = "0.21.0", features = ["csr"] }
 
+[dev-dependencies]
+rstest = "0.21.0"
+
 [[example]]
 name = "basic"
 path = "examples/basic.rs"
