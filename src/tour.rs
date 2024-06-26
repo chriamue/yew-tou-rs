@@ -66,10 +66,12 @@ pub fn calculate_arrow_position(
 
 #[function_component(Tour)]
 pub fn tour(config: &TourConfig) -> Html {
+    let id = config.id.clone().unwrap_or_else(|| "tour".to_string());
+
     let show_tour = {
         #[cfg(feature = "storage")]
         let default_show =
-            LocalStorage::get("show_tour").unwrap_or_else(|_| "true".to_string()) == "true";
+            LocalStorage::get(format!("{}-show", id)).unwrap_or_else(|_| "true".to_string()) == "true";
         #[cfg(not(feature = "storage"))]
         let default_show = true;
         use_state(|| default_show)
@@ -101,10 +103,11 @@ pub fn tour(config: &TourConfig) -> Html {
 
     let on_skip = {
         let show_tour = show_tour.clone();
+        let id = id.clone();
         Callback::from(move |_| {
             show_tour.set(false);
             #[cfg(feature = "storage")]
-            let _ = LocalStorage::set("show_tour", "false");
+            let _ = LocalStorage::set(format!("{}-show", id), "false");
         })
     };
 
@@ -119,17 +122,16 @@ pub fn tour(config: &TourConfig) -> Html {
 
     let selector_rect = get_element_rect(&selector).unwrap_or_default();
 
-    let window_height = window_height();
     let (arrow_position, dx, dy) = calculate_arrow_position(
         &selector_rect,
         TOOLTIP_WIDTH,
         TOOLTIP_HEIGHT,
         window_width(),
-        window_height,
+        window_height(),
     );
 
     html! {
-        <div class="tour">
+        <div class="tour" id={id.clone()}>
             <div class="introjsFloatingElement"></div>
             <div class="introjs-overlay" style="inset: 0px; position: fixed; cursor: pointer;"></div>
             <Selection x={selector_rect.x} y={selector_rect.y} width={selector_rect.width} height={selector_rect.height} />
