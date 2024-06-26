@@ -2,6 +2,16 @@
 
 Onboarding Tour for [Yew Framework](https://yew.rs) in Rust.
 
+## Links
+
+[![Documentation](https://img.shields.io/badge/docs-rustdoc-blue.svg)](https://chriamue.github.io/yew-tou-rs/doc/yew_tou_rs/)
+[![GitHub](https://img.shields.io/badge/github-repo-blue.svg)](https://github.com/chriamue/yew-tou-rs/)
+[![Demo](https://img.shields.io/badge/demo-online-brightgreen.svg)](https://chriamue.github.io/yew-tou-rs/)
+
+## Overview
+
+This library provides an onboarding tour for applications built using the Yew framework in Rust.
+
 ## Demo
 
 You can see the demo here:
