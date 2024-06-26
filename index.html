@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Yew-Tou-rs | Example</title>
+    <link rel="stylesheet" href="/yew-tou-rs/index-aa34f7dac471be31.css" integrity="sha384&#x2D;2RwdLI5kqvCJqHwe1tEAy&#x2B;7nVM7IdsL9GUs0GsQyVW&#x2B;dJUemH5kZq9MKnFfuGuw9"/>
+    <link rel="stylesheet" href="https://unpkg.com/intro.js/introjs.css">
+
+<link rel="modulepreload" href="/yew-tou-rs/example-basic-a1ea5e6fb0e48307.js" crossorigin=anonymous integrity="sha384-U7mqEdleR790Of/oUuKaS7UjO800F5HOvBnHNkAHL/6MnAq5i78VpYYzQ0jXLIxM">
+<link rel="preload" href="/yew-tou-rs/example-basic-a1ea5e6fb0e48307_bg.wasm" crossorigin=anonymous integrity="sha384-jKr+TDRLzdLp0DVU8V0o3S8Q4AJtEdhe7Vr75zXLjE0WfwABaGH90xfNA4RCaR6K" as="fetch" type="application/wasm"></head>
+<body>
+    
+<script type="module" nonce="vTdYnjWU6cxbkMPV+PVsMw==">
+import init, * as bindings from '/yew-tou-rs/example-basic-a1ea5e6fb0e48307.js';
+const wasm = await init('/yew-tou-rs/example-basic-a1ea5e6fb0e48307_bg.wasm');
+
+
+window.wasmBindings = bindings;
+
+
+dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
+
+</script>
+</body>
+</html>

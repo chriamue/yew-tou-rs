@@ -1,0 +1,69 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="A library for creating interactive tours in Yew applications."><title>yew_tou_rs - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-46f98efaafac5295.ttf.woff2,FiraSans-Regular-018c141bf0843ffd.woff2,FiraSans-Medium-8f9a781e4970d388.woff2,SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2,SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../static.files/rustdoc-081576b923113409.css"><meta name="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="yew_tou_rs" data-themes="" data-resource-suffix="" data-rustdoc-version="1.79.0 (129f3b996 2024-06-10)" data-channel="1.79.0" data-search-js="search-bf21c90c8c1d92b1.js" data-settings-js="settings-4313503d2e1961c2.js" ><script src="../static.files/storage-e32f0c247825364d.js"></script><script defer src="../crates.js"></script><script defer src="../static.files/main-20a3ad099b048cf2.js"></script><noscript><link rel="stylesheet" href="../static.files/noscript-09095024cf37855e.css"></noscript><link rel="alternate icon" type="image/png" href="../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc mod crate"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="mobile-topbar"><button class="sidebar-menu-toggle" title="show sidebar"></button></nav><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../yew_tou_rs/index.html">yew_tou_rs</a><span class="version">0.1.0</span></h2></div><div class="sidebar-elems"><ul class="block"><li><a id="all-types" href="all.html">All Items</a></li></ul><section><ul class="block"><li><a href="#modules">Modules</a></li></ul></section></div></nav><div class="sidebar-resizer"></div><main><div class="width-limiter"><nav class="sub"><form class="search-form"><span></span><div id="sidebar-button" tabindex="-1"><a href="../yew_tou_rs/all.html" title="show sidebar"></a></div><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Type ‘S’ or ‘/’ to search, ‘?’ for more options…" type="search"><div id="help-button" tabindex="-1"><a href="../help.html" title="help">?</a></div><div id="settings-menu" tabindex="-1"><a href="../settings.html" title="settings">Settings</a></div></form></nav><section id="main-content" class="content"><div class="main-heading"><h1>Crate <a class="mod" href="#">yew_tou_rs</a><button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><span class="out-of-band"><a class="src" href="../src/yew_tou_rs/lib.rs.html#1-115">source</a> · <button id="toggle-all-docs" title="collapse all docs">[<span>&#x2212;</span>]</button></span></div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>A library for creating interactive tours in Yew applications.</p>
+<p><code>yew-tou-rs</code> provides an easy way to implement guided tours in web applications
+built with the Yew framework. It allows developers to create step-by-step
+tutorials that highlight different elements of their user interface.</p>
+<h2 id="features"><a class="doc-anchor" href="#features">§</a>Features</h2>
+<ul>
+<li>Easy integration with Yew components</li>
+<li>Customizable tour steps</li>
+<li>Optional storage feature for persisting tour state</li>
+<li>Optional Markdown support for tour content</li>
+</ul>
+<h2 id="usage"><a class="doc-anchor" href="#usage">§</a>Usage</h2>
+<p>To use this library, add the following to your <code>Cargo.toml</code>:</p>
+<div class="example-wrap"><pre class="language-toml"><code>[dependencies]
+yew-tou-rs = { git = &quot;https://github.com/chriamue/yew-tou-rs&quot; }
+</code></pre></div>
+<p>For optional features, add:</p>
+<div class="example-wrap"><pre class="language-toml"><code>[dependencies]
+yew-tou-rs = { git = &quot;https://github.com/chriamue/yew-tou-rs&quot;, features = [&quot;storage&quot;, &quot;markdown&quot;] }
+</code></pre></div>
+<p>Then, in your Rust code, import the prelude to access the main components:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>yew_tou_rs::prelude::<span class="kw-2">*</span>;</code></pre></div>
+<h2 id="example"><a class="doc-anchor" href="#example">§</a>Example</h2>
+<p>Here’s a basic example of how to use the <code>Tour</code> component in a Yew application:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>yew::prelude::<span class="kw-2">*</span>;
+<span class="kw">use </span>yew_tou_rs::prelude::<span class="kw-2">*</span>;
+
+<span class="attr">#[function_component(App)]
+</span><span class="kw">fn </span>app() -&gt; Html {
+    <span class="kw">let </span>tour_config = TourConfig {
+        id: <span class="prelude-val">Some</span>(<span class="string">"main-tour"</span>.to_string()),
+        steps: <span class="macro">vec!</span>[
+            TourStep {
+                selector: <span class="string">".intro-element"</span>.to_string(),
+                content: <span class="string">"Welcome to our app! This is the first step of the tour."</span>.to_string(),
+            },
+            TourStep {
+                selector: <span class="string">"#feature-button"</span>.to_string(),
+                content: <span class="string">"Click here to see our main feature."</span>.to_string(),
+            },
+            TourStep {
+                selector: <span class="string">".help-section"</span>.to_string(),
+                content: <span class="string">"If you need help, you can always find it here."</span>.to_string(),
+            },
+        ],
+    };
+
+    <span class="macro">html!</span> {
+        &lt;div&gt;
+            &lt;h1 class=<span class="string">"intro-element"</span>&gt;{<span class="string">"Welcome to Our App"</span>}&lt;/h1&gt;
+            &lt;button id=<span class="string">"feature-button"</span>&gt;{<span class="string">"Main Feature"</span>}&lt;/button&gt;
+            &lt;div class=<span class="string">"help-section"</span>&gt;{<span class="string">"Help &amp; Support"</span>}&lt;/div&gt;
+
+            &lt;Tour steps={tour_config.steps} /&gt;
+        &lt;/div&gt;
+    }
+}</code></pre></div>
+<h2 id="modules"><a class="doc-anchor" href="#modules">§</a>Modules</h2>
+<ul>
+<li><code>config</code>: Defines the <code>TourConfig</code> struct for configuring tours.</li>
+<li><code>step</code>: Contains the <code>TourStep</code> struct for individual tour steps.</li>
+<li><code>tour</code>: Implements the main <code>Tour</code> component.</li>
+<li>Other modules provide supporting functionality and components.</li>
+</ul>
+<h2 id="license"><a class="doc-anchor" href="#license">§</a>License</h2>
+<p>This project is licensed under the MIT License. See the <a href="https://github.com/chriamue/yew-tou-rs/blob/main/LICENSE">LICENSE</a> file for details.</p>
+</div></details><h2 id="modules-1" class="section-header">Modules<a href="#modules-1" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="mod" href="prelude/index.html" title="mod yew_tou_rs::prelude">prelude</a></div><div class="desc docblock-short">Prelude module for convenient imports of commonly used items.</div></li></ul></section></div></main></body></html>
