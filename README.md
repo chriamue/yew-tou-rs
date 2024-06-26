@@ -86,6 +86,11 @@ let steps = vec![
 ];
 ```
 
+### Similiar Projects
+
+- [Reactour](https://www.react.tours/) for React
+- [Intro.js](https://introjs.com/) for Vanilla JS
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
