@@ -24,10 +24,19 @@ jobs:
       - run: rustup target add wasm32-unknown-unknown
       - run: trunk build --release --public-url /yew-tou-rs/
 
-      - name: Deploy
+      - name: Generate Rust docs
+        run: cargo doc --no-deps --target-dir target
+
+      - name: Copy docs to publish directory
+        run: mv ./examples/dist ./dist
+
+      - name: Copy docs to publish directory
+        run: cp -r target/doc dist/doc
+
+      - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
-          publish_dir: ./examples/dist
+          publish_dir: dist
           keep_files: true
