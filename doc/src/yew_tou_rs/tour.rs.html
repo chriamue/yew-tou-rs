@@ -251,6 +251,7 @@
 <a href="#251" id="251">251</a>
 <a href="#252" id="252">252</a>
 <a href="#253" id="253">253</a>
+<a href="#254" id="254">254</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::config::TourConfig;
 <span class="kw">use </span><span class="kw">crate</span>::content::Content;
 <span class="kw">use </span><span class="kw">crate</span>::navigation::Navigation;
@@ -357,6 +358,7 @@
 
     <span class="kw">let </span>on_skip = {
         <span class="kw">let </span>show_tour = show_tour.clone();
+        <span class="kw">let </span>id = id.clone();
         Callback::from(<span class="kw">move </span>|<span class="kw">_</span>| {
             show_tour.set(<span class="bool-val">false</span>);
             <span class="attr">#[cfg(feature = <span class="string">"storage"</span>)]
@@ -384,7 +386,7 @@
     );
 
     <span class="macro">html!</span> {
-        &lt;div class=<span class="string">"tour" </span>id={id}&gt;
+        &lt;div class=<span class="string">"tour" </span>id={id.clone()}&gt;
             &lt;div class=<span class="string">"introjsFloatingElement"</span>&gt;&lt;/div&gt;
             &lt;div class=<span class="string">"introjs-overlay" </span>style=<span class="string">"inset: 0px; position: fixed; cursor: pointer;"</span>&gt;&lt;/div&gt;
             &lt;Selection x={selector_rect.x} y={selector_rect.y} width={selector_rect.width} height={selector_rect.height} /&gt;
