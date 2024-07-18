@@ -14,7 +14,7 @@ markdown = ["dep:markdown"]
 
 [dependencies]
 gloo-storage = { version = "0.3.0", optional = true }
-markdown = { version ="=1.0.0-alpha.17", optional = true }
+markdown = { version ="1.0.0-alpha.18", optional = true }
 serde_json = "1.0.117"
 serde = { version = "1.0.203", features = ["derive"] }
 web-sys = { version = "0.3.68", features = ["DomRect"] }
