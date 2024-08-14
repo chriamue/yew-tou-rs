@@ -3,7 +3,7 @@ use crate::content::Content;
 use crate::navigation::Navigation;
 use crate::position::calculate_arrow_position;
 use crate::progress::Progress;
-use crate::rect::{get_element_rect, Rect};
+use crate::rect::get_element_rect;
 use crate::selection::Selection;
 use crate::step_info::StepInfo;
 #[cfg(feature = "storage")]
