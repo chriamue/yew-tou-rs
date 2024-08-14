@@ -16,12 +16,12 @@
 <a href="#16" id="16">16</a>
 <a href="#17" id="17">17</a>
 <a href="#18" id="18">18</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span>yew::prelude::<span class="kw-2">*</span>;
-<span class="kw">use </span><span class="kw">crate</span>::rect::Rect;
+</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::rect::Rect;
+<span class="kw">use </span>yew::prelude::<span class="kw-2">*</span>;
 
 <span class="attr">#[derive(Properties, Clone, PartialEq)]
 </span><span class="kw">pub struct </span>Props {
-    <span class="kw">pub </span>rect: Rect
+    <span class="kw">pub </span>rect: Rect,
 }
 
 <span class="attr">#[function_component(Selection)]

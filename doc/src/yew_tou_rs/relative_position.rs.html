@@ -92,8 +92,8 @@
 
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
-    <span class="kw">use </span>rstest::rstest;
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
+    <span class="kw">use </span>rstest::rstest;
 
     <span class="attr">#[rstest]
     #[case::left_of((<span class="number">100</span>, <span class="number">100</span>, <span class="number">50</span>, <span class="number">50</span>), (<span class="number">200</span>, <span class="number">100</span>, <span class="number">50</span>, <span class="number">50</span>), Rect::left_of)]
@@ -103,7 +103,7 @@
     </span><span class="kw">fn </span>test_positions(
         <span class="attr">#[case] </span>rect1: (i32, i32, i32, i32),
         <span class="attr">#[case] </span>rect2: (i32, i32, i32, i32),
-        <span class="attr">#[case] </span>orientation: <span class="kw">fn</span>(<span class="kw-2">&amp;</span>Rect, <span class="kw-2">&amp;</span>Rect) -&gt; bool
+        <span class="attr">#[case] </span>orientation: <span class="kw">fn</span>(<span class="kw-2">&amp;</span>Rect, <span class="kw-2">&amp;</span>Rect) -&gt; bool,
     ) {
         <span class="kw">let </span>rect1 = Rect::from(rect1);
         <span class="kw">let </span>rect2 = Rect::from(rect2);
