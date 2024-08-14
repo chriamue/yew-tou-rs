@@ -1,9 +1,9 @@
-use yew::prelude::*;
 use crate::rect::Rect;
+use yew::prelude::*;
 
 #[derive(Properties, Clone, PartialEq)]
 pub struct Props {
-    pub rect: Rect
+    pub rect: Rect,
 }
 
 #[function_component(Selection)]

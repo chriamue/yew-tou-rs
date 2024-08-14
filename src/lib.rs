@@ -87,13 +87,14 @@
 mod config;
 mod content;
 mod navigation;
+mod position;
 mod progress;
 mod rect;
+mod relative_position;
 mod selection;
 mod step;
 mod step_info;
 mod tour;
-mod relative_position;
 
 /// Prelude module for convenient imports of commonly used items.
 ///

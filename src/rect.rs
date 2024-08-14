@@ -115,8 +115,8 @@ pub fn get_element_rect(selector: &str) -> Result<Rect, String> {
 
 #[cfg(test)]
 mod tests {
-    use rstest::rstest;
     use super::*;
+    use rstest::rstest;
 
     #[rstest]
     #[case::rect1((10, 20, 30, 40), 1200)]

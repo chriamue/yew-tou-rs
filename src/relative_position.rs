@@ -36,8 +36,8 @@ impl RelativePosition for Rect {
 
 #[cfg(test)]
 mod tests {
-    use rstest::rstest;
     use super::*;
+    use rstest::rstest;
 
     #[rstest]
     #[case::left_of((100, 100, 50, 50), (200, 100, 50, 50), Rect::left_of)]
@@ -47,7 +47,7 @@ mod tests {
     fn test_positions(
         #[case] rect1: (i32, i32, i32, i32),
         #[case] rect2: (i32, i32, i32, i32),
-        #[case] orientation: fn(&Rect, &Rect) -> bool
+        #[case] orientation: fn(&Rect, &Rect) -> bool,
     ) {
         let rect1 = Rect::from(rect1);
         let rect2 = Rect::from(rect2);
