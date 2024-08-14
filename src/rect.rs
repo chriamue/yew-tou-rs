@@ -49,6 +49,18 @@ impl Rect {
     }
 }
 
+/// Rect from Tuple
+impl From<(i32, i32, i32, i32)> for Rect {
+    fn from(tuple: (i32, i32, i32, i32)) -> Self {
+        Rect {
+            x: tuple.0,
+            y: tuple.1,
+            width: tuple.2,
+            height: tuple.3,
+        }
+    }
+}
+
 impl Default for Rect {
     fn default() -> Self {
         Rect {
@@ -103,17 +115,16 @@ pub fn get_element_rect(selector: &str) -> Result<Rect, String> {
 
 #[cfg(test)]
 mod tests {
+    use rstest::rstest;
     use super::*;
 
-    #[test]
-    fn test_area() {
-        let rect = Rect {
-            x: 10,
-            y: 20,
-            width: 30,
-            height: 40,
-        };
-        assert_eq!(rect.area(), 1200);
+    #[rstest]
+    #[case::rect1((10, 20, 30, 40), 1200)]
+    #[case::rect2((0, 0, 5, 5), 25)]
+    #[case::rect3((15, 25, 0, 0), 0)]
+    fn test_area(#[case] rect: (i32, i32, i32, i32), #[case] expected_area: i32) {
+        let rect = Rect::from(rect);
+        assert_eq!(rect.area(), expected_area);
     }
 
     #[test]

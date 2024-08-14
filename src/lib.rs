@@ -93,6 +93,7 @@ mod selection;
 mod step;
 mod step_info;
 mod tour;
+mod relative_position;
 
 /// Prelude module for convenient imports of commonly used items.
 ///
