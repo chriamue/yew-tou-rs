@@ -181,6 +181,17 @@
 <a href="#181" id="181">181</a>
 <a href="#182" id="182">182</a>
 <a href="#183" id="183">183</a>
+<a href="#184" id="184">184</a>
+<a href="#185" id="185">185</a>
+<a href="#186" id="186">186</a>
+<a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>web_sys::Element;
 
 <span class="attr">#[derive(Debug, PartialEq, Copy, Clone)]
@@ -229,6 +240,18 @@
         <span class="kw">let </span>x_overlap = (<span class="self">self</span>.right().min(other.right()) - <span class="self">self</span>.left().max(other.left())).max(<span class="number">0</span>);
         <span class="kw">let </span>y_overlap = (<span class="self">self</span>.bottom().min(other.bottom()) - <span class="self">self</span>.top().max(other.top())).max(<span class="number">0</span>);
         x_overlap * y_overlap
+    }
+}
+
+<span class="doccomment">/// Rect from Tuple
+</span><span class="kw">impl </span>From&lt;(i32, i32, i32, i32)&gt; <span class="kw">for </span>Rect {
+    <span class="kw">fn </span>from(tuple: (i32, i32, i32, i32)) -&gt; <span class="self">Self </span>{
+        Rect {
+            x: tuple.<span class="number">0</span>,
+            y: tuple.<span class="number">1</span>,
+            width: tuple.<span class="number">2</span>,
+            height: tuple.<span class="number">3</span>,
+        }
     }
 }
 
@@ -286,17 +309,16 @@
 
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
+    <span class="kw">use </span>rstest::rstest;
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
 
-    <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_area() {
-        <span class="kw">let </span>rect = Rect {
-            x: <span class="number">10</span>,
-            y: <span class="number">20</span>,
-            width: <span class="number">30</span>,
-            height: <span class="number">40</span>,
-        };
-        <span class="macro">assert_eq!</span>(rect.area(), <span class="number">1200</span>);
+    <span class="attr">#[rstest]
+    #[case::rect1((<span class="number">10</span>, <span class="number">20</span>, <span class="number">30</span>, <span class="number">40</span>), <span class="number">1200</span>)]
+    #[case::rect2((<span class="number">0</span>, <span class="number">0</span>, <span class="number">5</span>, <span class="number">5</span>), <span class="number">25</span>)]
+    #[case::rect3((<span class="number">15</span>, <span class="number">25</span>, <span class="number">0</span>, <span class="number">0</span>), <span class="number">0</span>)]
+    </span><span class="kw">fn </span>test_area(<span class="attr">#[case] </span>rect: (i32, i32, i32, i32), <span class="attr">#[case] </span>expected_area: i32) {
+        <span class="kw">let </span>rect = Rect::from(rect);
+        <span class="macro">assert_eq!</span>(rect.area(), expected_area);
     }
 
     <span class="attr">#[test]
