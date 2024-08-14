@@ -1,11 +1,52 @@
 use web_sys::Element;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 pub struct Rect {
+    /// The X coordinate of the top-left corner of the rectangle.
     pub x: i32,
+
+    /// The Y coordinate of the top-left corner of the rectangle.
     pub y: i32,
+
+    /// The width of the rectangle.
     pub width: i32,
+
+    /// The height of the rectangle.
     pub height: i32,
+}
+
+impl Rect {
+    /// Calculates the area of the rectangle.
+    pub fn area(&self) -> i32 {
+        self.width * self.height
+    }
+
+    /// Returns the leftmost X coordinate of the rectangle.
+    pub fn left(&self) -> i32 {
+        self.x
+    }
+
+    /// Returns the rightmost X coordinate of the rectangle.
+    pub fn right(&self) -> i32 {
+        self.x + self.width
+    }
+
+    /// Returns the topmost Y coordinate of the rectangle.
+    pub fn top(&self) -> i32 {
+        self.y
+    }
+
+    /// Returns the bottommost Y coordinate of the rectangle.
+    pub fn bottom(&self) -> i32 {
+        self.y + self.height
+    }
+
+    /// Calculates the overlap area between this rectangle and another rectangle.
+    pub fn overlap(&self, other: &Rect) -> i32 {
+        let x_overlap = (self.right().min(other.right()) - self.left().max(other.left())).max(0);
+        let y_overlap = (self.bottom().min(other.bottom()) - self.top().max(other.top())).max(0);
+        x_overlap * y_overlap
+    }
 }
 
 impl Default for Rect {
@@ -58,4 +99,85 @@ pub fn get_element_rect(selector: &str) -> Result<Rect, String> {
         width: rect.width() as i32,
         height: rect.height() as i32,
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_area() {
+        let rect = Rect {
+            x: 10,
+            y: 20,
+            width: 30,
+            height: 40,
+        };
+        assert_eq!(rect.area(), 1200);
+    }
+
+    #[test]
+    fn test_left_right_top_bottom() {
+        let rect = Rect {
+            x: 5,
+            y: 10,
+            width: 20,
+            height: 30,
+        };
+        assert_eq!(rect.left(), 5);
+        assert_eq!(rect.right(), 25);
+        assert_eq!(rect.top(), 10);
+        assert_eq!(rect.bottom(), 40);
+    }
+
+    #[test]
+    fn test_overlap_no_overlap() {
+        let rect1 = Rect {
+            x: 10,
+            y: 10,
+            width: 10,
+            height: 10,
+        };
+        let rect2 = Rect {
+            x: 25,
+            y: 25,
+            width: 5,
+            height: 5,
+        };
+        assert_eq!(rect1.overlap(&rect2), 0);
+    }
+
+    #[test]
+    fn test_overlap_full_overlap() {
+        let rect1 = Rect {
+            x: 10,
+            y: 10,
+            width: 20,
+            height: 30,
+        };
+        let rect2 = Rect {
+            x: 5,
+            y: 5,
+            width: 30,
+            height: 40,
+        };
+        assert_eq!(rect1.overlap(&rect2), rect1.area());
+    }
+
+    #[test]
+    fn test_overlap_partial_overlap() {
+        let rect1 = Rect {
+            x: 10,
+            y: 10,
+            width: 20,
+            height: 30,
+        };
+        let rect2 = Rect {
+            x: 15,
+            y: 5,
+            width: 10,
+            height: 20,
+        };
+        assert_eq!(rect1.overlap(&rect2), 150);
+    }
 }

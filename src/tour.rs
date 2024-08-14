@@ -135,7 +135,7 @@ pub fn tour(config: &TourConfig) -> Html {
         <div class="tour" id={id.clone()}>
             <div class="introjsFloatingElement"></div>
             <div class="introjs-overlay" style="inset: 0px; position: fixed; cursor: pointer;"></div>
-            <Selection x={selector_rect.x} y={selector_rect.y} width={selector_rect.width} height={selector_rect.height} />
+            <Selection rect={selector_rect} />
             <div class="introjs-tooltipReferenceLayer"
                 style={format!("left: {}px; top: {}px; width: {}px; height: {}px;",
                     selector_rect.x, selector_rect.y, selector_rect.width, selector_rect.height)} >
