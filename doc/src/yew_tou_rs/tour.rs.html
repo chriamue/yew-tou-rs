@@ -126,24 +126,34 @@
 <a href="#126" id="126">126</a>
 <a href="#127" id="127">127</a>
 <a href="#128" id="128">128</a>
-</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::components::content::Content;
-<span class="kw">use </span><span class="kw">crate</span>::components::navigation::Navigation;
-<span class="kw">use </span><span class="kw">crate</span>::components::progress::Progress;
-<span class="kw">use </span><span class="kw">crate</span>::components::selection::Selection;
-<span class="kw">use </span><span class="kw">crate</span>::components::step_info::StepInfo;
-<span class="kw">use </span><span class="kw">crate</span>::models::get_element_rect;
-<span class="kw">use </span><span class="kw">crate</span>::models::TourConfig;
+<a href="#129" id="129">129</a>
+<a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
+<a href="#133" id="133">133</a>
+<a href="#134" id="134">134</a>
+<a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
+</pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::components::{Content, Navigation, Progress, Selection, StepInfo};
+<span class="kw">use </span><span class="kw">crate</span>::models::{Rect, TourConfig};
 <span class="kw">use </span><span class="kw">crate</span>::utils::calculate_arrow_position;
-
 <span class="attr">#[cfg(feature = <span class="string">"storage"</span>)]
 </span><span class="kw">use </span>gloo_storage::{LocalStorage, Storage};
+<span class="kw">use </span>web_sys::ScrollToOptions;
 <span class="kw">use </span>yew::prelude::<span class="kw-2">*</span>;
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>ARROW_SIZE: i32 = <span class="number">10</span>;
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>TOOLTIP_WIDTH: i32 = <span class="number">300</span>;
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">const </span>TOOLTIP_HEIGHT: i32 = <span class="number">230</span>;
 
-<span class="kw">fn </span>window_height() -&gt; i32 {
+<span class="comment">// Helper functions for window dimensions
+</span><span class="kw">fn </span>window_height() -&gt; i32 {
     web_sys::window()
         .unwrap()
         .inner_height()
@@ -161,15 +171,23 @@
         .unwrap() <span class="kw">as </span>i32
 }
 
+<span class="comment">// New function to scroll the selected element into view
+</span><span class="kw">fn </span>scroll_into_view(rect: <span class="kw-2">&amp;</span>Rect) {
+    <span class="kw">let </span>window = web_sys::window().unwrap();
+    <span class="kw">let </span><span class="kw-2">mut </span>options = ScrollToOptions::new();
+    options.top(rect.top().into());
+    options.left(rect.left().into());
+    options.behavior(web_sys::ScrollBehavior::Smooth);
+    window.scroll_to_with_scroll_to_options(<span class="kw-2">&amp;</span>options);
+}
+
 <span class="attr">#[function_component(Tour)]
 </span><span class="kw">pub fn </span>tour(config: <span class="kw-2">&amp;</span>TourConfig) -&gt; Html {
     <span class="kw">let </span>id = config.id.clone().unwrap_or_else(|| <span class="string">"tour"</span>.to_string());
 
     <span class="kw">let </span>show_tour = {
         <span class="attr">#[cfg(feature = <span class="string">"storage"</span>)]
-        </span><span class="kw">let </span>default_show = LocalStorage::get(<span class="macro">format!</span>(<span class="string">"{}-show"</span>, id))
-            .unwrap_or_else(|<span class="kw">_</span>| <span class="string">"true"</span>.to_string())
-            == <span class="string">"true"</span>;
+        </span><span class="kw">let </span>default_show = LocalStorage::get(<span class="macro">format!</span>(<span class="string">"{}-show"</span>, id)).unwrap_or_else(|<span class="kw">_</span>| <span class="bool-val">true</span>);
         <span class="attr">#[cfg(not(feature = <span class="string">"storage"</span>))]
         </span><span class="kw">let </span>default_show = <span class="bool-val">true</span>;
         use_state(|| default_show)
@@ -177,7 +195,7 @@
     <span class="kw">let </span>current_step = use_state(|| <span class="number">0usize</span>);
 
     <span class="kw">if </span>!<span class="kw-2">*</span>show_tour {
-        <span class="kw">return </span><span class="macro">html!</span> { &lt;&gt;&lt;/&gt; };
+        <span class="kw">return </span><span class="macro">html!</span> {};
     }
 
     <span class="kw">let </span>on_next = {
@@ -205,7 +223,7 @@
         Callback::from(<span class="kw">move </span>|<span class="kw">_</span>| {
             show_tour.set(<span class="bool-val">false</span>);
             <span class="attr">#[cfg(feature = <span class="string">"storage"</span>)]
-            </span><span class="kw">let _ </span>= LocalStorage::set(<span class="macro">format!</span>(<span class="string">"{}-show"</span>, id), <span class="string">"false"</span>);
+            </span><span class="kw">let _ </span>= LocalStorage::set(<span class="macro">format!</span>(<span class="string">"{}-show"</span>, id), <span class="bool-val">false</span>);
         })
     };
 
@@ -218,9 +236,14 @@
 
     <span class="kw">let </span>selector: String = config.steps[<span class="kw-2">*</span>current_step].selector.clone();
 
-    <span class="kw">let </span>selector_rect = get_element_rect(<span class="kw-2">&amp;</span>selector).unwrap_or_default();
+    <span class="comment">// Get the rectangle of the selected element
+    </span><span class="kw">let </span>selector_rect = <span class="kw">crate</span>::models::get_element_rect(<span class="kw-2">&amp;</span>selector).unwrap_or_default();
 
-    <span class="kw">let </span>(arrow_position, dx, dy) = calculate_arrow_position(
+    <span class="comment">// Scroll the selected element into view
+    </span>scroll_into_view(<span class="kw-2">&amp;</span>selector_rect);
+
+    <span class="comment">// Calculate the tooltip position
+    </span><span class="kw">let </span>(arrow_position, dx, dy) = calculate_arrow_position(
         <span class="kw-2">&amp;</span>selector_rect,
         TOOLTIP_WIDTH,
         TOOLTIP_HEIGHT,
@@ -228,24 +251,29 @@
         window_height(),
     );
 
+    <span class="comment">// Adjust tooltip position relative to the selected element
+    </span><span class="kw">let </span>tooltip_left = dx - selector_rect.left();
+    <span class="kw">let </span>tooltip_top = dy - selector_rect.top();
+
     <span class="macro">html!</span> {
         &lt;div class=<span class="string">"tour" </span>id={id.clone()}&gt;
             &lt;div class=<span class="string">"introjsFloatingElement"</span>&gt;&lt;/div&gt;
-            &lt;div class=<span class="string">"introjs-overlay" </span>style=<span class="string">"inset: 0px; position: fixed; cursor: pointer;"</span>&gt;&lt;/div&gt;
+            &lt;div class=<span class="string">"introjs-overlay" </span>style=<span class="string">"inset: 0px; position: fixed; cursor: pointer;" </span>onclick={on_skip.clone()}&gt;&lt;/div&gt;
             &lt;Selection rect={selector_rect} /&gt;
             &lt;div class=<span class="string">"introjs-tooltipReferenceLayer"
-                </span>style={<span class="macro">format!</span>(<span class="string">"left: {}px; top: {}px; width: {}px; height: {}px;"</span>,
-                    selector_rect.x, selector_rect.y, selector_rect.width, selector_rect.height)} &gt;
+                </span>style={<span class="macro">format!</span>(<span class="string">"left: {}px; top: {}px; width: {}px; height: {}px; position: absolute;"</span>,
+                    selector_rect.left(), selector_rect.top(), selector_rect.width, selector_rect.height)} &gt;
                 &lt;div class=<span class="string">"introjs-tooltip" </span>role=<span class="string">"dialog"
-                    </span>style={<span class="macro">format!</span>(<span class="string">"left: {}px; top: {}px;"</span>, dx, dy)}&gt;
+                    </span>style={<span class="macro">format!</span>(<span class="string">"left: {}px; top: {}px; position: absolute; width: {}px; height: {}px;"</span>,
+                        tooltip_left, tooltip_top, TOOLTIP_WIDTH, TOOLTIP_HEIGHT)}&gt;
                     &lt;div class={<span class="macro">format!</span>(<span class="string">"introjs-arrow {}"</span>, arrow_position)} style=<span class="string">"display: inherit;"</span>&gt;&lt;/div&gt;
                     &lt;div class=<span class="string">"introjs-tooltip-header"</span>&gt;
                         &lt;StepInfo value={<span class="kw-2">*</span>current_step} /&gt;
-                        &lt;a class=<span class="string">"introjs-skipbutton" </span>href=<span class="string">"#" </span>onclick={on_skip}&gt;
+                        &lt;a class=<span class="string">"introjs-skipbutton" </span>href=<span class="string">"#" </span>onclick={on_skip.clone()}&gt;
                             {<span class="string">"×"</span>}
                         &lt;/a&gt;
                     &lt;/div&gt;
-                    &lt;Content content={(<span class="kw-2">&amp;*</span>config.steps[<span class="kw-2">*</span>current_step].content).to_string()} /&gt;
+                    &lt;Content content={config.steps[<span class="kw-2">*</span>current_step].content.clone()} /&gt;
                     &lt;Progress current={<span class="kw-2">*</span>current_step} total={config.steps.len()} on_click={on_progress_click} /&gt;
                     &lt;Navigation on_prev={on_prev} on_next={on_next} /&gt;
                     &lt;div class=<span class="string">"introjs-tooltipfooter"</span>&gt;&lt;/div&gt;

@@ -50,6 +50,17 @@
 <a href="#50" id="50">50</a>
 <a href="#51" id="51">51</a>
 <a href="#52" id="52">52</a>
+<a href="#53" id="53">53</a>
+<a href="#54" id="54">54</a>
+<a href="#55" id="55">55</a>
+<a href="#56" id="56">56</a>
+<a href="#57" id="57">57</a>
+<a href="#58" id="58">58</a>
+<a href="#59" id="59">59</a>
+<a href="#60" id="60">60</a>
+<a href="#61" id="61">61</a>
+<a href="#62" id="62">62</a>
+<a href="#63" id="63">63</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span>yew::prelude::<span class="kw-2">*</span>;
 <span class="kw">use </span>yew_tou_rs::prelude::<span class="kw-2">*</span>;
 
@@ -75,6 +86,11 @@
             selector: <span class="string">".button-step"</span>.to_string(),
             content: <span class="string">"This is a button"</span>.to_string(),
         },
+        <span class="comment">// New step for the right-side element
+        </span>TourStep {
+            selector: <span class="string">".right-side-element"</span>.to_string(),
+            content: <span class="string">"This element is on the right edge of the screen."</span>.to_string(),
+        },
         TourStep {
             selector: <span class="string">"footer"</span>.to_string(),
             content: <span class="string">"This is a footer"</span>.to_string(),
@@ -84,10 +100,16 @@
     <span class="comment">// Render the main application structure
     </span><span class="macro">html!</span> {
         &lt;div class=<span class="string">"app"</span>&gt;
-            <span class="comment">// Each element has a class that matches a selector in the tour steps
+            <span class="comment">// Existing elements
             </span>&lt;h1 class=<span class="string">"h1-step" </span>data-title=<span class="string">"h1" </span>data-intro=<span class="string">"This is a title"</span>&gt;{<span class="string">"Hello, Yew Tou-rs"</span>}&lt;/h1&gt;
             &lt;p class=<span class="string">"p-step" </span>data-title=<span class="string">"p" </span>data-intro=<span class="string">"This is a paragraph"</span>&gt;{<span class="string">"This is a simple example of a Yew Tou-rs."</span>}&lt;/p&gt;
             &lt;button class=<span class="string">"button-step"</span>&gt;{<span class="string">"Click me"</span>}&lt;/button&gt;
+
+            <span class="comment">// New element on the right side
+            </span>&lt;div class=<span class="string">"right-side-element"</span>&gt;
+                {<span class="string">"Right Side Element"</span>}
+            &lt;/div&gt;
+
             &lt;footer class=<span class="string">"footer-step"</span>&gt;
                 &lt;a href=<span class="string">"https://github.com/chriamue/yew-tou-rs"</span>&gt;{<span class="string">"yew-tou-rs"</span>}&lt;/a&gt;
             &lt;/footer&gt;
