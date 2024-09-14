@@ -1,4 +1,4 @@
-use crate::step::TourStep;
+use crate::models::TourStep;
 use serde::{Deserialize, Serialize};
 use yew::Properties;
 

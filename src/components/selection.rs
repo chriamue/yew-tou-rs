@@ -1,4 +1,4 @@
-use crate::rect::Rect;
+use crate::models::Rect;
 use yew::prelude::*;
 
 #[derive(Properties, Clone, PartialEq)]

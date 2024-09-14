@@ -1,11 +1,12 @@
-use crate::config::TourConfig;
-use crate::content::Content;
-use crate::navigation::Navigation;
-use crate::position::calculate_arrow_position;
-use crate::progress::Progress;
-use crate::rect::get_element_rect;
-use crate::selection::Selection;
-use crate::step_info::StepInfo;
+use crate::components::content::Content;
+use crate::components::navigation::Navigation;
+use crate::components::progress::Progress;
+use crate::components::selection::Selection;
+use crate::components::step_info::StepInfo;
+use crate::models::get_element_rect;
+use crate::models::TourConfig;
+use crate::utils::calculate_arrow_position;
+
 #[cfg(feature = "storage")]
 use gloo_storage::{LocalStorage, Storage};
 use yew::prelude::*;

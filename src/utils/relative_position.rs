@@ -1,4 +1,4 @@
-use crate::rect::Rect;
+use crate::models::Rect;
 
 /// This trait defines methods for determining the relative position of one
 /// rectangle compared to another.

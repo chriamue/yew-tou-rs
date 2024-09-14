@@ -84,17 +84,10 @@
 //!
 //! This project is licensed under the MIT License. See the [LICENSE](https://github.com/chriamue/yew-tou-rs/blob/main/LICENSE) file for details.
 
-mod config;
-mod content;
-mod navigation;
-mod position;
-mod progress;
-mod rect;
-mod relative_position;
-mod selection;
-mod step;
-mod step_info;
+mod components;
+mod models;
 mod tour;
+mod utils;
 
 /// Prelude module for convenient imports of commonly used items.
 ///
@@ -111,7 +104,7 @@ mod tour;
 ///
 /// For a complete usage example, see the crate-level documentation.
 pub mod prelude {
-    pub use crate::config::TourConfig;
-    pub use crate::step::TourStep;
+    pub use crate::models::TourConfig;
+    pub use crate::models::TourStep;
     pub use crate::tour::Tour;
 }

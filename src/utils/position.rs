@@ -1,4 +1,4 @@
-use crate::rect::Rect;
+use crate::models::Rect;
 use crate::tour::ARROW_SIZE;
 
 pub fn calculate_arrow_position(
