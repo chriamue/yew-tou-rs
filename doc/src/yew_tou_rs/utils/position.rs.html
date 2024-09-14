@@ -203,6 +203,31 @@
 <a href="#203" id="203">203</a>
 <a href="#204" id="204">204</a>
 <a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
+<a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a>
+<a href="#216" id="216">216</a>
+<a href="#217" id="217">217</a>
+<a href="#218" id="218">218</a>
+<a href="#219" id="219">219</a>
+<a href="#220" id="220">220</a>
+<a href="#221" id="221">221</a>
+<a href="#222" id="222">222</a>
+<a href="#223" id="223">223</a>
+<a href="#224" id="224">224</a>
+<a href="#225" id="225">225</a>
+<a href="#226" id="226">226</a>
+<a href="#227" id="227">227</a>
+<a href="#228" id="228">228</a>
+<a href="#229" id="229">229</a>
+<a href="#230" id="230">230</a>
 </pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::models::Rect;
 <span class="kw">use </span><span class="kw">crate</span>::tour::ARROW_SIZE;
 
@@ -243,6 +268,9 @@
     <span class="kw">let </span>can_place_left = left_space &gt;= tooltip_width + ARROW_SIZE;
     <span class="kw">let </span>can_place_right = right_space &gt;= tooltip_width + ARROW_SIZE;
 
+    <span class="comment">// Define preferred order of positions
+    </span><span class="kw">let </span>preferred_order = [<span class="string">"bottom"</span>, <span class="string">"top"</span>, <span class="string">"left"</span>, <span class="string">"right"</span>];
+
     <span class="comment">// Create a list of possible positions where the tooltip fits
     </span><span class="kw">let </span><span class="kw-2">mut </span>possible_positions = Vec::new();
 
@@ -250,7 +278,8 @@
         possible_positions.push((
             <span class="string">"top"</span>,
             bottom_space,
-            selected_rect.left() + (selected_rect.width - tooltip_width) / <span class="number">2</span>,
+            <span class="number">0</span>, <span class="comment">// Index for ordering
+            </span>selected_rect.left() + (selected_rect.width - tooltip_width) / <span class="number">2</span>,
             selected_rect.bottom() + ARROW_SIZE,
         ));
     }
@@ -258,6 +287,7 @@
         possible_positions.push((
             <span class="string">"bottom"</span>,
             top_space,
+            <span class="number">1</span>,
             selected_rect.left() + (selected_rect.width - tooltip_width) / <span class="number">2</span>,
             selected_rect.top() - tooltip_height - ARROW_SIZE,
         ));
@@ -266,6 +296,7 @@
         possible_positions.push((
             <span class="string">"left"</span>,
             right_space,
+            <span class="number">2</span>,
             selected_rect.right() + ARROW_SIZE,
             selected_rect.top() + (selected_rect.height - tooltip_height) / <span class="number">2</span>,
         ));
@@ -274,15 +305,24 @@
         possible_positions.push((
             <span class="string">"right"</span>,
             left_space,
+            <span class="number">3</span>,
             selected_rect.left() - tooltip_width - ARROW_SIZE,
             selected_rect.top() + (selected_rect.height - tooltip_height) / <span class="number">2</span>,
         ));
     }
 
-    <span class="comment">// Choose the position with the most space
-    </span><span class="kw">let </span>(arrow_position, <span class="kw">_</span>, <span class="kw-2">mut </span>x_pos, <span class="kw-2">mut </span>y_pos) = <span class="kw">if let </span><span class="prelude-val">Some</span>(position) = possible_positions
+    <span class="comment">// Choose the position with the most space and highest priority
+    </span><span class="kw">let </span>(arrow_position, <span class="kw">_</span>, <span class="kw">_</span>, <span class="kw-2">mut </span>x_pos, <span class="kw-2">mut </span>y_pos) = <span class="kw">if let </span><span class="prelude-val">Some</span>(position) = possible_positions
         .into_iter()
-        .max_by_key(|<span class="kw-2">&amp;</span>(<span class="kw">_</span>, space, <span class="kw">_</span>, <span class="kw">_</span>)| space)
+        .max_by(|a, b| {
+            <span class="kw">let </span>space_cmp = a.<span class="number">1</span>.cmp(<span class="kw-2">&amp;</span>b.<span class="number">1</span>);
+            <span class="kw">if </span>space_cmp == std::cmp::Ordering::Equal {
+                <span class="comment">// Compare based on preferred order
+                </span>a.<span class="number">2</span>.cmp(<span class="kw-2">&amp;</span>b.<span class="number">2</span>)
+            } <span class="kw">else </span>{
+                space_cmp
+            }
+        })
     {
         position
     } <span class="kw">else </span>{
@@ -290,6 +330,7 @@
         </span>(
             <span class="string">"top"</span>,
             bottom_space,
+            <span class="number">0</span>,
             selected_rect.left() + (selected_rect.width - tooltip_width) / <span class="number">2</span>,
             selected_rect.bottom() + ARROW_SIZE,
         )
@@ -311,6 +352,7 @@
     (arrow_position, x_pos, y_pos)
 }
 
+
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>test {
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
@@ -322,11 +364,13 @@
     <span class="kw">const </span>DEFAULT_WINDOW_WIDTH: i32 = <span class="number">800</span>;
     <span class="kw">const </span>DEFAULT_WINDOW_HEIGHT: i32 = <span class="number">600</span>;
 
+    <span class="kw">const </span>ARROW_SIZE: i32 = <span class="number">10</span>;
+
     <span class="attr">#[rstest]
-    #[case(<span class="string">"Element on top"</span>, Rect { x: <span class="number">200</span>, y: <span class="number">20</span>, width: <span class="number">100</span>, height: <span class="number">50 </span>}, <span class="string">"top"</span>, <span class="number">0</span>, <span class="number">50 </span>+ ARROW_SIZE)]
-    #[case(<span class="string">"Element on bottom"</span>, Rect { x: <span class="number">200</span>, y: <span class="number">500</span>, width: <span class="number">100</span>, height: <span class="number">50 </span>}, <span class="string">"bottom"</span>, <span class="number">0</span>, -ARROW_SIZE - TOOLTIP_HEIGHT)]
-    #[case(<span class="string">"Element on left edge"</span>, Rect { x: <span class="number">0</span>, y: <span class="number">200</span>, width: <span class="number">100</span>, height: <span class="number">50 </span>}, <span class="string">"left"</span>, <span class="number">100 </span>+ ARROW_SIZE, -<span class="number">25</span>)]
-    #[case(<span class="string">"Element on right edge"</span>, Rect { x: <span class="number">700</span>, y: <span class="number">200</span>, width: <span class="number">100</span>, height: <span class="number">50 </span>}, <span class="string">"right"</span>, -ARROW_SIZE -TOOLTIP_WIDTH, -<span class="number">25</span>)]
+    #[case(<span class="string">"Element at top"</span>, Rect { x: <span class="number">200</span>, y: <span class="number">20</span>, width: <span class="number">100</span>, height: <span class="number">50 </span>}, <span class="string">"top"</span>, <span class="number">200</span>, <span class="number">80</span>)]
+    #[case(<span class="string">"Element at bottom"</span>, Rect { x: <span class="number">200</span>, y: <span class="number">500</span>, width: <span class="number">100</span>, height: <span class="number">50 </span>}, <span class="string">"bottom"</span>, <span class="number">200</span>, <span class="number">390</span>)]
+    #[case(<span class="string">"Element at left edge"</span>, Rect { x: <span class="number">0</span>, y: <span class="number">200</span>, width: <span class="number">100</span>, height: <span class="number">50 </span>}, <span class="string">"left"</span>, <span class="number">110</span>, <span class="number">175</span>)]
+    #[case(<span class="string">"Element at right edge"</span>, Rect { x: <span class="number">700</span>, y: <span class="number">200</span>, width: <span class="number">100</span>, height: <span class="number">50 </span>}, <span class="string">"right"</span>, <span class="number">590</span>, <span class="number">175</span>)]
     </span><span class="kw">fn </span>test_calculate_arrow_position(
         <span class="attr">#[case] </span>name: <span class="kw-2">&amp;</span>str,
         <span class="attr">#[case] </span>rect: Rect,
@@ -342,6 +386,12 @@
             DEFAULT_WINDOW_HEIGHT,
         );
 
+        <span class="comment">// Add debug output
+        </span><span class="macro">println!</span>(
+            <span class="string">"Test '{}': Expected arrow_position='{}', dx={}, dy={}. Got arrow_position='{}', dx={}, dy={}"</span>,
+            name, expected_arrow, expected_dx, expected_dy, arrow_position, dx, dy
+        );
+
         <span class="macro">assert_eq!</span>(
             arrow_position, expected_arrow,
             <span class="string">"Arrow position mismatch for {}"</span>,
@@ -352,8 +402,8 @@
     }
 
     <span class="attr">#[rstest]
-    #[case(<span class="string">"Small tooltip"</span>, Rect { x: <span class="number">200</span>, y: <span class="number">200</span>, width: <span class="number">100</span>, height: <span class="number">50 </span>}, <span class="number">200</span>, <span class="number">100</span>, <span class="string">"left"</span>, <span class="number">110</span>, -<span class="number">25</span>)]
-    #[case(<span class="string">"Element larger than tooltip"</span>, Rect { x: <span class="number">200</span>, y: <span class="number">200</span>, width: <span class="number">400</span>, height: <span class="number">50 </span>}, TOOLTIP_WIDTH, TOOLTIP_HEIGHT, <span class="string">"top"</span>, <span class="number">150</span>, <span class="number">60</span>)]
+    #[case(<span class="string">"Small tooltip"</span>, Rect { x: <span class="number">200</span>, y: <span class="number">200</span>, width: <span class="number">100</span>, height: <span class="number">50 </span>}, <span class="number">200</span>, <span class="number">100</span>, <span class="string">"left"</span>, <span class="number">310</span>, <span class="number">175</span>)]
+    #[case(<span class="string">"Element larger than tooltip"</span>, Rect { x: <span class="number">200</span>, y: <span class="number">200</span>, width: <span class="number">400</span>, height: <span class="number">50 </span>}, TOOLTIP_WIDTH, TOOLTIP_HEIGHT, <span class="string">"top"</span>, <span class="number">350</span>, <span class="number">260</span>)]
     </span><span class="kw">fn </span>test_calculate_arrow_position_with_different_sizes(
         <span class="attr">#[case] </span>name: <span class="kw-2">&amp;</span>str,
         <span class="attr">#[case] </span>rect: Rect,
@@ -381,9 +431,9 @@
     }
 
     <span class="attr">#[rstest]
-    #[case(<span class="string">"Element at (0, 0)"</span>, Rect { x: <span class="number">0</span>, y: <span class="number">0</span>, width: <span class="number">50</span>, height: <span class="number">50 </span>}, <span class="string">"left"</span>, <span class="number">60</span>, -<span class="number">25</span>)]
-    #[case(<span class="string">"Element at bottom right corner"</span>, Rect { x: <span class="number">750</span>, y: <span class="number">550</span>, width: <span class="number">50</span>, height: <span class="number">50 </span>}, <span class="string">"right"</span>, -TOOLTIP_WIDTH - ARROW_SIZE, -<span class="number">25</span>)]
-    #[case(<span class="string">"Element larger than window"</span>, Rect { x: -<span class="number">100</span>, y: -<span class="number">100</span>, width: <span class="number">1000</span>, height: <span class="number">1000 </span>}, <span class="string">"bottom"</span>, <span class="number">450</span>, -<span class="number">110</span>)]
+    #[case(<span class="string">"Element at (0, 0)"</span>, Rect { x: <span class="number">0</span>, y: <span class="number">0</span>, width: <span class="number">50</span>, height: <span class="number">50 </span>}, <span class="string">"right"</span>, <span class="number">0</span>, <span class="number">0</span>)]
+    #[case(<span class="string">"Element at bottom right corner"</span>, Rect { x: <span class="number">750</span>, y: <span class="number">550</span>, width: <span class="number">50</span>, height: <span class="number">50 </span>}, <span class="string">"left"</span>, <span class="number">690</span>, <span class="number">475</span>)]
+    #[case(<span class="string">"Element larger than window"</span>, Rect { x: -<span class="number">100</span>, y: -<span class="number">100</span>, width: <span class="number">1000</span>, height: <span class="number">1000 </span>}, <span class="string">"top"</span>, <span class="number">0</span>, <span class="number">0</span>)]
     </span><span class="kw">fn </span>test_edge_cases(
         <span class="attr">#[case] </span>name: <span class="kw-2">&amp;</span>str,
         <span class="attr">#[case] </span>rect: Rect,
