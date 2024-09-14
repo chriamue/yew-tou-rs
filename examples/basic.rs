@@ -23,6 +23,11 @@ pub fn app() -> Html {
             selector: ".button-step".to_string(),
             content: "This is a button".to_string(),
         },
+        // New step for the right-side element
+        TourStep {
+            selector: ".right-side-element".to_string(),
+            content: "This element is on the right edge of the screen.".to_string(),
+        },
         TourStep {
             selector: "footer".to_string(),
             content: "This is a footer".to_string(),
@@ -32,10 +37,16 @@ pub fn app() -> Html {
     // Render the main application structure
     html! {
         <div class="app">
-            // Each element has a class that matches a selector in the tour steps
+            // Existing elements
             <h1 class="h1-step" data-title="h1" data-intro="This is a title">{"Hello, Yew Tou-rs"}</h1>
             <p class="p-step" data-title="p" data-intro="This is a paragraph">{"This is a simple example of a Yew Tou-rs."}</p>
             <button class="button-step">{"Click me"}</button>
+
+            // New element on the right side
+            <div class="right-side-element">
+                {"Right Side Element"}
+            </div>
+
             <footer class="footer-step">
                 <a href="https://github.com/chriamue/yew-tou-rs">{"yew-tou-rs"}</a>
             </footer>
