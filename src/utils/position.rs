@@ -1,6 +1,25 @@
 use crate::models::Rect;
 use crate::tour::ARROW_SIZE;
 
+/// Calculates the best position for the tooltip relative to the selected element.
+///
+/// This function determines the optimal position (top, bottom, left, right) for the tooltip,
+/// ensuring it stays within the window boundaries and chooses the side with the most available space.
+///
+/// # Parameters
+///
+/// - `selected_rect`: The rectangle representing the selected element.
+/// - `tooltip_width`: The width of the tooltip.
+/// - `tooltip_height`: The height of the tooltip.
+/// - `window_width`: The width of the browser window.
+/// - `window_height`: The height of the browser window.
+///
+/// # Returns
+///
+/// A tuple containing:
+/// - `arrow_position`: A string indicating where the arrow should point (e.g., "top", "bottom").
+/// - `x`: The x-coordinate for positioning the tooltip.
+/// - `y`: The y-coordinate for positioning the tooltip.
 pub fn calculate_arrow_position(
     selected_rect: &Rect,
     tooltip_width: i32,
@@ -13,31 +32,78 @@ pub fn calculate_arrow_position(
     let left_space = selected_rect.left();
     let right_space = window_width - selected_rect.right();
 
-    let max_space = top_space.max(bottom_space).max(left_space).max(right_space);
+    // Determine if the tooltip can fit on each side
+    let can_place_top = top_space >= tooltip_height + ARROW_SIZE;
+    let can_place_bottom = bottom_space >= tooltip_height + ARROW_SIZE;
+    let can_place_left = left_space >= tooltip_width + ARROW_SIZE;
+    let can_place_right = right_space >= tooltip_width + ARROW_SIZE;
 
-    let (arrow_position, x, y) = if max_space == top_space {
-        // Position tooltip above the selected_rect
-        let x_pos = (selected_rect.width / 2) - (tooltip_width / 2);
-        let y_pos = -ARROW_SIZE - tooltip_height;
-        ("bottom", x_pos, y_pos)
-    } else if max_space == bottom_space {
-        // Position tooltip below the selected_rect
-        let x_pos = (selected_rect.width / 2) - (tooltip_width / 2);
-        let y_pos = selected_rect.height + ARROW_SIZE;
-        ("top", x_pos, y_pos)
-    } else if max_space == left_space {
-        // Position tooltip to the left of the selected_rect
-        let x_pos = -tooltip_width - ARROW_SIZE;
-        let y_pos = (selected_rect.height / 2) - (tooltip_height / 2);
-        ("right", x_pos, y_pos)
+    // Create a list of possible positions where the tooltip fits
+    let mut possible_positions = Vec::new();
+
+    if can_place_bottom {
+        possible_positions.push((
+            "top",
+            bottom_space,
+            selected_rect.left() + (selected_rect.width - tooltip_width) / 2,
+            selected_rect.bottom() + ARROW_SIZE,
+        ));
+    }
+    if can_place_top {
+        possible_positions.push((
+            "bottom",
+            top_space,
+            selected_rect.left() + (selected_rect.width - tooltip_width) / 2,
+            selected_rect.top() - tooltip_height - ARROW_SIZE,
+        ));
+    }
+    if can_place_right {
+        possible_positions.push((
+            "left",
+            right_space,
+            selected_rect.right() + ARROW_SIZE,
+            selected_rect.top() + (selected_rect.height - tooltip_height) / 2,
+        ));
+    }
+    if can_place_left {
+        possible_positions.push((
+            "right",
+            left_space,
+            selected_rect.left() - tooltip_width - ARROW_SIZE,
+            selected_rect.top() + (selected_rect.height - tooltip_height) / 2,
+        ));
+    }
+
+    // Choose the position with the most space
+    let (arrow_position, _, mut x_pos, mut y_pos) = if let Some(position) = possible_positions
+        .into_iter()
+        .max_by_key(|&(_, space, _, _)| space)
+    {
+        position
     } else {
-        // Position tooltip to the right of the selected_rect
-        let x_pos = selected_rect.width + ARROW_SIZE;
-        let y_pos = (selected_rect.height / 2) - (tooltip_height / 2);
-        ("left", x_pos, y_pos)
+        // Default to placing below the element
+        (
+            "top",
+            bottom_space,
+            selected_rect.left() + (selected_rect.width - tooltip_width) / 2,
+            selected_rect.bottom() + ARROW_SIZE,
+        )
     };
 
-    (arrow_position, x, y)
+    // Adjust position to keep the tooltip within window boundaries
+    if x_pos < 0 {
+        x_pos = 0;
+    } else if x_pos + tooltip_width > window_width {
+        x_pos = window_width - tooltip_width;
+    }
+
+    if y_pos < 0 {
+        y_pos = 0;
+    } else if y_pos + tooltip_height > window_height {
+        y_pos = window_height - tooltip_height;
+    }
+
+    (arrow_position, x_pos, y_pos)
 }
 
 #[cfg(test)]
