@@ -38,7 +38,7 @@ yew-tou-rs = { git = "https://github.com/chriamue/yew-tou-rs" }
 Add the following to your `index.html`:
 
 ```html
-<link rel="stylesheet" href="https://unpkg.com/intro.js/introjs.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intro.js/7.2.0/introjs.css">
 ```
 
 See [Intro.js](https://introjs.com/#commercial) for more information about its license.
