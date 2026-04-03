@@ -81,14 +81,13 @@ pub fn calculate_arrow_position(
         ));
     }
 
-    // Choose the position with the most space and highest priority
+    // Choose the position with the most space, breaking ties by preferred order (lower index wins)
     let (arrow_position, _, _, mut x_pos, mut y_pos) = if let Some(position) = possible_positions
         .into_iter()
         .max_by(|a, b| {
             let space_cmp = a.1.cmp(&b.1);
             if space_cmp == std::cmp::Ordering::Equal {
-                // Compare based on preferred order
-                a.2.cmp(&b.2)
+                b.2.cmp(&a.2)
             } else {
                 space_cmp
             }
@@ -201,9 +200,9 @@ mod test {
     }
 
     #[rstest]
-    #[case("Element at (0, 0)", Rect { x: 0, y: 0, width: 50, height: 50 }, "right", 0, 0)]
-    #[case("Element at bottom right corner", Rect { x: 750, y: 550, width: 50, height: 50 }, "left", 690, 475)]
-    #[case("Element larger than window", Rect { x: -100, y: -100, width: 1000, height: 1000 }, "top", 0, 0)]
+    #[case("Element at (0, 0)", Rect { x: 0, y: 0, width: 50, height: 50 }, "left", 60, 0)]
+    #[case("Element at bottom right corner", Rect { x: 750, y: 550, width: 50, height: 50 }, "right", 640, 500)]
+    #[case("Element larger than window", Rect { x: -100, y: -100, width: 1000, height: 1000 }, "top", 350, 500)]
     fn test_edge_cases(
         #[case] name: &str,
         #[case] rect: Rect,

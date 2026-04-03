@@ -32,10 +32,10 @@ fn window_width() -> i32 {
 // New function to scroll the selected element into view
 fn scroll_into_view(rect: &Rect) {
     let window = web_sys::window().unwrap();
-    let mut options = ScrollToOptions::new();
-    options.top(rect.top().into());
-    options.left(rect.left().into());
-    options.behavior(web_sys::ScrollBehavior::Smooth);
+    let options = ScrollToOptions::new();
+    options.set_top(rect.top().into());
+    options.set_left(rect.left().into());
+    options.set_behavior(web_sys::ScrollBehavior::Smooth);
     window.scroll_to_with_scroll_to_options(&options);
 }
 
