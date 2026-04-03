@@ -42,6 +42,7 @@ fn scroll_into_view(rect: &Rect) {
 #[function_component(Tour)]
 pub fn tour(config: &TourConfig) -> Html {
     let id = config.id.clone().unwrap_or_else(|| "tour".to_string());
+    let on_close = config.on_close.clone();
 
     let show_tour = {
         #[cfg(feature = "storage")]
@@ -59,9 +60,17 @@ pub fn tour(config: &TourConfig) -> Html {
     let on_next = {
         let current_step = current_step.clone();
         let step_count = config.steps.len();
+        let show_tour = show_tour.clone();
+        let on_close = on_close.clone();
         Callback::from(move |_| {
             if *current_step < step_count - 1 {
                 current_step.set(*current_step + 1);
+            } else {
+                // Last step — treat as completion
+                show_tour.set(false);
+                if let Some(cb) = &on_close {
+                    cb.emit(());
+                }
             }
         })
     };
@@ -78,10 +87,14 @@ pub fn tour(config: &TourConfig) -> Html {
     let on_skip = {
         let show_tour = show_tour.clone();
         let id = id.clone();
+        let on_close = on_close.clone();
         Callback::from(move |_| {
             show_tour.set(false);
             #[cfg(feature = "storage")]
             let _ = LocalStorage::set(format!("{}-show", id), false);
+            if let Some(cb) = &on_close {
+                cb.emit(());
+            }
         })
     };
 

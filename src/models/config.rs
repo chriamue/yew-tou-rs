@@ -1,6 +1,6 @@
 use crate::models::TourStep;
 use serde::{Deserialize, Serialize};
-use yew::Properties;
+use yew::{Callback, Properties};
 
 /// Configuration for a tour.
 ///
@@ -46,6 +46,13 @@ use yew::Properties;
 /// This struct can be cloned and easily printed for debugging purposes.
 #[derive(Properties, Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct TourConfig {
+    /// Optional callback invoked when the tour is closed or completed.
+    ///
+    /// This will not be serialized/deserialized.
+    #[serde(skip)]
+    #[prop_or_default]
+    pub on_close: Option<Callback<()>>,
+
     /// An optional unique identifier for the tour.
     ///
     /// This can be used to distinguish between different tours in your application
